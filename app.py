@@ -80,22 +80,55 @@ def login():
         return "Wrong email and password"
     else:
         session.permanent = True
-        session['uname'] = request.form['username']
-        return 'welcome ' + request.form['username']
+        session['unam'] = request.form['username']
+        return render_template('homepage.html') + "Welcome " + request.form['username']
 
 
-@app.route('/username')
+@app.route('/un')
 def un():
-	if 'uname' in session:
-		return 'Logged in as %s' % escape(session['uname'])
-	return 'You are not logged in'
+    if 'unam' in session:
+        return 'Logged in as %s' % escape(session['unam'])
+    return render_template('homepage.html') +  'You are not logged in'
 
 @app.route('/logout')
 def logout():
-    session.pop('uname', None)
-    return redirect(url_for('username'))
+    session.pop('unam', None)
+    return redirect(url_for('un'))
+
+@app.route('/tetra')
+def fish():
+  connection = sqlite3.connect("ourfish.db")
+  cursor = connection.cursor()
+
+  sqlcommand = """
 
 
-    
+      CREATE TABLE IF NOT EXISTS tblfish
+      (
+          fishID       TEXT,
+          fishName     TEXT,
+          price        INTEGER,
+          size         TEXT,
+          tempRange    TEXT,
+          pHRange      TEXT,
+          rating       TEXT,
+          primary key   (fishID)
+      )"""
+
+  cursor.execute(sqlcommand)
+  print("tblfish table has been created in ourfish.db")
+  tblTemps = [('001','Neon Tetra',1.45,'3cm','21–27°C','6.0–6.5',"***"),
+              ('002','Serpae Tetra',2.50,'3cm','22-27°C','6.0–8.0',"****"),
+
+              ]
+  #cursor.executemany("INSERT INTO tblFISH1 VALUES (?,?,?,?,?,?,?)", (request.form['fishID'], request.form['fishName'], (request.form['price'], request.form['size'], request.form['tempRange'], request.form['pHRange'], (request.form['rating'])
+  cursor.executemany("INSERT or REPLACE into tblfish VALUES (?,?,?,?,?,?,?)",tblTemps)
+  print("\n To select and display only records whichs are of 'Action' and 'Animation category")
+  for row1 in cursor.execute('SELECT * FROM tblfish WHERE rating = "***" '):
+    print(row1)
+  connection.commit()
+  connection.close()
+fish()
+
 
 
