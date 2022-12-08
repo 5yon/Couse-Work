@@ -2,14 +2,11 @@
 
     <head>
 
-
 <link rel="stylesheet" type="text/css" href="/static/style2.css">
    </head>
 
-
-
     <body>
-        <center><p style="font-size:30px"><a href="homepage.html">Home</a></p></center>
+        <center><p style="font-size:30px"><a href="https://5yon-code50-99250001-r5pv5r465xw25gpv-5000.preview.app.github.dev/">Home</a></p></center>
      <div class="logo" >
                 <img src="/static/LOGO2.png" alt ="logo" width=250 height=200>
             </div>
@@ -18,7 +15,7 @@
 
     </body>
 
-  <body> <marquee direction="left"  behavior="alternate"><h1 style="font-family:calibri">please enter your log in details </h1></marquee>  </body>
+  <body> <marquee direction="left"  behavior="alternate"><h1 style="font-family:calibri">Please enter your login details! </h1></marquee>  </body>
 
 
   </head>
@@ -33,35 +30,42 @@
   <form action="/login" method="post">
       <table>
         <tr>
-          <td>Email:</td>
-          <td><input type="text" name="email" placeholder="Enter Email Here"></td>
+          <td>Username:</td>
+          <td><input type="text" name="username" placeholder="Enter Username Here"></td>
         </tr>
-
         <tr>
           <td>Password:</td>
-          <td><input type="password" name="user_pass" placeholder="Enter Password Here"></td>
+          <td><input type="password" id="password" name="password" placeholder="Enter Password Here"></td>
         </tr>
-
         <tr>
-
+          <td><input type="checkbox" onClick="myFunction()" >Show password</td>
+        </tr>
+        <tr>
            <td><input type="submit" name="submit" value="Login"></td>
            <td><p>Not yet a Member? <a href="/register"><b>Create Account</b></a></p></td>
         </tr>
-
       </table>
   </form>
 
 
   </center>
-</body>
-</html>
-</body>
+<script>
+  function myFunction() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
 
-</html>
 
-</script></h2>
+
+
 
         <b><a href=https://www.tropco.co.uk/>project example </a></b>
 
     </body>
 </html>
+
