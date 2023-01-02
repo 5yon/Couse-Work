@@ -1,71 +1,40 @@
-<html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Login Form</title>
+      <link rel="stylesheet" type="text/css" href="/static/login.css">
 
-    <head>
-
-<link rel="stylesheet" type="text/css" href="/static/style2.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
    </head>
-
-    <body>
-        <center><p style="font-size:30px"><a href="https://5yon-code50-99250001-r5pv5r465xw25gpv-5000.preview.app.github.dev/">Home</a></p></center>
-     <div class="logo" >
-                <img src="/static/LOGO2.png" alt ="logo" width=250 height=200>
-            </div>
-        <center><h8>Welcome to Jumanji Aquatics</h8></centre>
-
-
-    </body>
-
-  <body> <marquee direction="left"  behavior="alternate"><h1 style="font-family:calibri">Please enter your login details! </h1></marquee>  </body>
-
-
-  </head>
-        <style>
-      :hover, b:hover {
-        background-color:grey;
-      }
-      </style>
-<body>
-  <center>
-  <h3>Login Here</h3>
-  <form action="/login" method="post">
-      <table>
-        <tr>
-          <td>Username:</td>
-          <td><input type="text" name="username" placeholder="Enter Username Here"></td>
-        </tr>
-        <tr>
-          <td>Password:</td>
-          <td><input type="password" id="password" name="password" placeholder="Enter Password Here"></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" onClick="myFunction()" >Show password</td>
-        </tr>
-        <tr>
-           <td><input type="submit" name="submit" value="Login"></td>
-           <td><p>Not yet a Member? <a href="/register"><b>Create Account</b></a></p></td>
-        </tr>
-      </table>
-  </form>
-
-
-  </center>
-<script>
-  function myFunction() {
-  var x = document.getElementById("password");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-}
-</script>
-
-
-
-
-
-        <b><a href=https://www.tropco.co.uk/>project example </a></b>
-
-    </body>
+   <body>
+      <div class="center">
+         <div class="header">
+            Login Form
+         </div>
+         <form action="/login" method="POST">
+         <form>
+            <input type="text" name="username"  name="email" placeholder="Username or Email">
+            <i class="far fa-envelope"></i>
+            <input type="password" id="pswrd" name="password" placeholder="Password">
+            <i class="fas fa-lock" onclick="show()"></i>
+            <input type="submit" name="submit "value="Sign in">
+            <a href="#">Forgot Password?</a>
+            <a><br>  Not yet a Member? <a href="/register"><b>Create Account</b></a>
+         </form>
+      </div>
+      <script>
+         function show(){
+          var pswrd = document.getElementById('pswrd');
+          var icon = document.querySelector('.fas');
+          if (pswrd.type === "password") {
+           pswrd.type = "text";
+           pswrd.style.marginTop = "20px";
+           icon.style.color = "#7f2092";
+          }else{
+           pswrd.type = "password";
+           icon.style.color = "grey";
+          }
+         }
+      </script>
+   </body>
 </html>
-
