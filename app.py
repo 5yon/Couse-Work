@@ -1,87 +1,155 @@
 from flask import Flask, render_template, request, session, redirect, url_for
+#we must import flask to use it, render_template  allows connection to HTML, request allows data to be fetched from any database.
+#session allows users data and activity on the website to be stored, redirect just returns user back to a specifc page.
+# url_for provides another connection function.
 import os
+# imports a python module.
 import sqlite3
+# imports sqlite as the database.
 from markupsafe import escape
 from datetime import timedelta
+#allows the implementation and connection to the date and time.
 
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = os.urandom(16)
+#random key used to send and save data in the browser and is used for sessions.
 app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=1)
-
+#This is necessary for the timeout function to be implemented for each session.
 
 @app.route('/')
 def home():
         return render_template('homepage.html')
 
 @app.route('/user')
+#labels the login html page as "user"
 def user():
+    # def creates a function
     return render_template('login.html')
+    #outputes the html page in the bracketsimage.png (login.html)
 
 @app.route('/register')
 def register():
-    return render_template('register.html')
+    return render_template('signup.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/tetra')
+def tetra():
+    return render_template('tetra.html')
 
 @app.route('/signup',methods=['POST'])
 def signup():
-    con = sqlite3.connect('login.db')
-    cur = con.cursor()
-    cur.execute("INSERT INTO USER(username,email,password,mobile) VALUES (?,?,?,?)", (request.form['username'],request.form['email'],request.form['password'],request.form['mobile']))
-    con.commit()
-    con.close()
-    session.permanent = True
-    session['username'] = request.form['username']
-    return 'welcome ' + request.form['username']
+    with sqlite3.connect('fish.db') as db:
+        #con = sqlite3.connect('fish.db')
+        #cur = con.cursor()
+        ##cur.execute("INSERT INTO USER(username,email,password,mobile) VALUES (?,?,?,?)", (request.form['username'],request.form['email'],request.form['password'],request.form['mobile']))
+        ##con.commit()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO USER (Username, Email, Password) VALUES (?,?,?)",
+			       		(request.form['username'],request.form['email'], request.form['password']))
+        db.commit()
+        session.permanent = True
+        session['username'] = request.form['username']
+        # Redirect the user back to the homepage
+        return render_template('homepage.html') + "Welcome " + request.form['username']
+        #session.permanent = True
+        #session['username'] = request.form['username']
+        #return 'welcome ' + request.form['username']
 
 @app.route('/create')
+#creates a table in the Database, in this case using sqlite
 def create():
-    con = sqlite3.connect('login.db')
-    cur = con.cursor()
-    cur.execute("""
-                    CREATE TABLE USER(
-                    username VARCHAR(20) NOT NULL PRIMARY KEY,
-                    email VARCHAR(20) NOT NULL,
-                    password VARCHAR(25) NOT NULL,
-                    mobile VARCHAR(20) NOT NULL)
-                """)
-    return 'created'
+            with sqlite3.connect('fish.db') as db:
+                # assigning fish.db as the name of the Database
+                cursor = db.cursor()
+                # creates a cursor connection
+                cursor.execute(	"""	CREATE TABLE IF NOT EXISTS USER(
+						Username text VARCHAR(20) NOT NULL,
+                        Email text VARCHAR(20) NOT NULL,
+						Password text VARCHAR(20) NOT NULL,
+						Primary Key(Username))""")
+                db.commit()
+                return 'created'
+                # cursor.execute is used to create the table.
+                # the operations are inputted within the brackets (Username,Email etc...)
+                # NOT NULL meaning each operation requirement must be filled.
+                # return created will me be shown once the table is created.
+
+#@app.route('/create')
+#def create():
+    #con = sqlite3.connect('fish.db')
+    #cur = con.cursor()
+    #cur.execute("""
+                    #CREATE TABLE USER(
+                    #username VARCHAR(20) NOT NULL PRIMARY KEY,
+                    #email VARCHAR(20) NOT NULL,
+                    #password VARCHAR(25) NOT NULL,
+                    #mobile VARCHAR(20) NOT NULL)
+                #""")
+    #return 'created'
 
 
 
 @app.route('/select')
 def select():
-    con = sqlite3.connect('login.db')
+    con = sqlite3.connect('fish.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM USER")
     rows = cur.fetchall()
     return render_template('table.html', rows=rows)
 
 
-@app.route('/insert', methods=['POST'])
 def insert():
-	with sqlite3.connect('login.db') as db:
-		cursor = db.cursor()
-		cursor.execute(	"INSERT INTO Users (Username, Password) VALUES (?,?)",
-			       		(request.form['username'],request.form['password']))
-		db.commit()
-	return request.form['username'] + ' added'
+  with sqlite3.connect('fish.db') as db:
+    cursor = db.cursor()
 
+    # Check if the email is NULL
+    if request.form['email'] is None:
+      # The email is NULL, do not insert the new row
+      print('Email cannot be NULL')
+    else:
+      cursor.execute("""
+        INSERT INTO USER (Username, Password, Email)
+        VALUES (?, ?, ?)
+      """, (request.form['username'], request.form['email'], request.form['password']))
+      db.commit()
+  return request.form['username'] + ' added'
+
+		#cursor.execute("""	INSERT INTO Users (email, Password)
 
 
 
 @app.route('/login', methods=['POST'])
 def login():
-    con = sqlite3.connect('login.db')
+    con = sqlite3.connect('fish.db')
+    #'connect' is used to create a connection with the 'fish.db' database
     cur = con.cursor()
-    cur.execute("SELECT * FROM USER WHERE Username=? AND Password=?",
-    (request.form['username'],request.form['password']))
+    cur.execute("SELECT * FROM USER WHERE Username=?  AND Password=?",
+    #searches for the username and password in the USER table
+    (request.form['username'], request.form['password']))
+    #requests these two form values the username and the password
     match = len(cur.fetchall())
+    #checks if their is a match by comparing the inputted data to the data in the table
     if match == 0:
+        #if match is equal to 0 then the user has entered the incorrect password. So one that isn't found in the db
         return "Wrong email and password"
+        #return this message
     else:
         session.permanent = True
+        #if the entered credentials are correct, so match the values in the db, A session is started for the user.
         session['unam'] = request.form['username']
+        #session is labelled 'unam', and is stored under the users username
         return render_template('homepage.html') + "Welcome " + request.form['username']
+        #directs the user to the homepage, and presents this message welcome + for e.g Bob
+
+
+    #else:
+        #request.form["password"]= 2005
+        #request.form["Username"]= "MrTom"
+        #return render_template('homepage.html') + "Welcome " + request.form['username']
 
 
 @app.route('/un')
@@ -130,5 +198,13 @@ def fish():
   connection.close()
 fish()
 
-
-
+#@app.route('/createfishtable')
+#def create():
+            #with sqlite3.connect('fish.db') as db:
+                #cursor = db.cursor()
+                #cursor.execute(	"""	CREATE TABLE IF NOT EXISTS tblFISH(
+				#		Username text,
+				#		Password text,
+				#		Primary Key(Username))""")
+                #db.commit()
+                #return 'created'
